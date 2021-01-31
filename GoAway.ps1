@@ -109,7 +109,7 @@ function Search-Registry {
                         if ($ValueDataRegex) {  
                             Write-Verbose ("{0}: Checking ValueDataRegex" -f $Key.Name) 
     
-                            if (($Key.GetValueNames() | % { $Key.GetValue($_) }) -match $ValueDataRegex) {  
+                            if (($Key.GetValueNames() | ForEach-Object { $Key.GetValue($_) }) -match $ValueDataRegex) {  
                                 Write-Verbose "  -> Match!" 
                                 return [PSCustomObject] @{ 
                                     Key = $Key 
@@ -121,5 +121,9 @@ function Search-Registry {
             } 
         } 
     } 
+
+Write-Host "$"
+
+Search-Registry -Path "HKLM:\" -Recurse -SearchRegex $ProgramName
 
 cmd /c pause
