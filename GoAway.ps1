@@ -1,18 +1,33 @@
 if($args[0] -match "help" -or $args.Count -eq 0)
 {
     Write-Host "GoAway - Application Annihilator for Windows 10" -ForegroundColor Green -BackgroundColor Black
-    Write-Host "usage: .\GoAway.ps1 <ProgramName> [Optional <InstallFolderPath>]" -ForegroundColor Red -BackgroundColor Black
+    Write-Host "usage: .\GoAway.ps1 [<ProgramName> [Optional <InstallFolderPath>]] [delete]" -ForegroundColor Red -BackgroundColor Black
     return
 } 
 $ProgramName = $args[0]
 $InstallFolderPath = "cd $Env:Programfiles", "${Env:ProgramFiles(x86)}", "$Env:USERPROFILE\AppData\"
+
+if($ProgramName -eq "delete")
+{
+    Get-Content -Path .\MatchedKeys.txt
+    Write-Host "ARE YOU SURE YOU WOULD LIKE TO DELETE THESE KEYS... (ctrl+c to stop)" -ForegroundColor Red -BackgroundColor Black
+    cmd /c pause
+
+    #System restore point
+    Write-Host "Creating System Restore Point..." -ForegroundColor Green -BackgroundColor Black
+    Checkpoint-Computer -Description "GoAway-$(get-date -f yyyy-MM-dd_HH-mm-ss)"
+
+    #Delete
+    Get-Content -Path .\MatchedKeys.txt | Remove-ItemProperty
+
+    return
+}
 
 # Program user path
 if($args.Count -eq 2)
 {
     $InstallFolderPath = $args[1]   
 }
-
 
 # Looks for files in the stated file path, finds them if they have the key term uninstall and lists them
 # Get-ChildItem -Path "$($UninstallPath)\*" -Include *uninstall* 
