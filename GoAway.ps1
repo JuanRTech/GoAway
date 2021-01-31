@@ -1,12 +1,22 @@
-if($args[0] -eq "Help".ToLower())
+if($args[0] -match "help" -or $args.Count -eq 0)
 {
-    Write-Host "GoAway - Application Annihilator for Windows 10`nusage: .\GoAway.ps1 <ProgramName> [Optional <FolderPath>]"
+    Write-Host "GoAway - Application Annihilator for Windows 10" -ForegroundColor Green -BackgroundColor Black
+    Write-Host "usage: .\GoAway.ps1 <ProgramName> [Optional <InstallFolderPath>]" -ForegroundColor Red -BackgroundColor Black
+    return
 } 
 $ProgramName = $args[0]
-$UninstallPath = $args[1]
+$InstallFolderPath = "cd $Env:Programfiles", "${Env:ProgramFiles(x86)}", "$Env:USERPROFILE\AppData\"
+
+# Program user path
+if($args.Count -eq 2)
+{
+    $InstallFolderPath = $args[1]   
+}
+
 
 # Looks for files in the stated file path, finds them if they have the key term uninstall and lists them
-Get-ChildItem -Path "$($UninstallPath)\*" -Include *uninstall* 
+# Get-ChildItem -Path "$($UninstallPath)\*" -Include *uninstall* 
+Write-Host "Searching for uninstallers in " $InstallFolderPath - -ForegroundColor Red -BackgroundColor Black
 
 #for each loop that takes each file found called "uninstall.exe" and runs it
 foreach ($uninstallexe in Get-ChildItem -Path "$($UninstallPath)\*" -Include *uninstall* )
