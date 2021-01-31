@@ -132,8 +132,11 @@ function Search-Registry {
         } 
     } 
 
-Write-Host "$"
+Write-Host "Searching for $ProgramName... This may take several hours depending on your system..." -ForegroundColor Green -BackgroundColor Black
+Write-Host "Nothing will be deleted at this stage..." -ForegroundColor Red -BackgroundColor Black
 
-Search-Registry -Path "HKLM:\" -Recurse -SearchRegex $ProgramName
+#Search and output to file
+Search-Registry -Path "HKLM:\" -Recurse -SearchRegex $ProgramName | Out-File -FilePath .\MatchedKeys.txt
+Get-Content -Path .\MatchedKeys.txt
 
 cmd /c pause
